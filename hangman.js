@@ -296,6 +296,16 @@ function hideWord(word) {
   return hiddenWord;
 }
 
+function isExistingChar(guess, hiddenWord) {
+  for (let index = 0; index < hiddenWord.length; index++) {
+    if (hiddenWord[index] === guess) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function _play(chancesLeft, hiddenWord) {
   console.log(visualiseHangman(chancesLeft + 1));
   console.log(hiddenWord);
@@ -305,19 +315,20 @@ function _play(chancesLeft, hiddenWord) {
   }
 
   if (chancesLeft === 0) {
-    return 'The word was "' + WORD + '" Bad Luck ☹️ YOU DIED 💀 Game Ended 🏳️';
+    return 'The word was "' + WORD + '" Bad Luck 😞 YOU DIED 💀 Game Ended 🏳️';
   }
 
   console.log('You have ' + chancesLeft + ' chances to guess.');
   const guess = prompt('Guess a character:');
 
   if (verifyGuess(guess)) {
-    console.log('\nGood job 👍 Keep Going\n');
+    const rightGuessMessage = isExistingChar(guess, hiddenWord) ? '\n ‼️ You have already entered that character\n' : '\n ✅ Good job 👍 Keep Going\n';
+    console.log(rightGuessMessage);
 
     return _play(chancesLeft, replaceIndices(hiddenWord, getMatchedIndices(WORD, guess)));
   }
 
-  console.log('\nOops!!\n');
+  console.log('\n ❌ Oops!!\n');
 
   return _play(chancesLeft - 1, hiddenWord);
 }
