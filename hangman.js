@@ -312,7 +312,6 @@ function _play(chancesLeft, hiddenWord) {
   const guess = prompt('Guess a character:');
 
   if (verifyGuess(guess)) {
-    if(isExisti)
     console.log('\nGood job 👍 Keep Going\n');
 
     return _play(chancesLeft, replaceIndices(hiddenWord, getMatchedIndices(WORD, guess)));
