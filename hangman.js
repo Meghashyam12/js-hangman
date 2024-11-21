@@ -312,6 +312,7 @@ function _play(chancesLeft, hiddenWord) {
   const guess = prompt('Guess a character:');
 
   if (verifyGuess(guess)) {
+    if(isExisti)
     console.log('\nGood job 👍 Keep Going\n');
 
     return _play(chancesLeft, replaceIndices(hiddenWord, getMatchedIndices(WORD, guess)));
@@ -335,8 +336,8 @@ function printRules() {
   console.log('👉For every wrong guess, you will lose one chance, that means you\'ll lose one body part.');
   console.log('👉For every right guess, all the positions of the character that you\'ve guessed will be revealed.');
   console.log('👉That means you don\'t have to guess the same character again and you\'ll not lose a chance.');
-  console.log('👉You\'ll survive if you guess all the characters(word)');
-  console.log('👉You\'ll die if you don\'t guess it within the given chances\n');
+  console.log('👉You\'ll survive if you guess all the characters(word).');
+  console.log('👉You\'ll die if you don\'t guess it within the given chances.\n');
 }
 
 printRules();
