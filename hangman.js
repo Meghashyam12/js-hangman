@@ -282,14 +282,15 @@ function _play(chancesLeft, word, theme, hiddenWord, wrongGuesses) {
   }
 
   if (chancesLeft === 0) {
-    return 'The word was "' + word + '" Bad Luck 😞 YOU DIED 💀 Game Ended 🏳️';
+    return '\nThe word was "' + word + '" Bad Luck 😞 YOU DIED 💀 Game Ended 🏳️';
   }
 
   console.log('You have ' + chancesLeft + ' chances to guess.');
   const guess = prompt('Guess a character:');
   const newHiddenWord = replaceIndices(hiddenWord, guess, word);
   const sameGuess = isExistingChar(guess, hiddenWord);
-  const rightGuessMessage = sameGuess ? '\n ‼️ You have already entered that character\n' : '\n ✅ Good job 👍 Keep Going\n';
+  const sameGuessMessage = '\n ‼️ You have already entered that character\n';
+  const rightGuessMessage = sameGuess ? sameGuessMessage : '\n ✅ Good job 👍 Keep Going\n';
 
   if (hiddenWord !== newHiddenWord || sameGuess) {
     console.clear();
@@ -299,7 +300,7 @@ function _play(chancesLeft, word, theme, hiddenWord, wrongGuesses) {
   }
 
   console.clear();
-  console.log('\n ❌ Oops!!\n');
+  console.log('\n ❌ Oops!! Guess Carefully\n');
 
   return _play(chancesLeft - 1, word, theme, hiddenWord, wrongGuesses + '"' + guess + '" ');
 }
@@ -317,35 +318,45 @@ function getRules() {
   return rules;
 }
 
-function getRandomIndex() {
-  return Math.floor(Math.random() * 10);
+function getRandomNumberInRange(from, to) {
+  return from + Math.floor(Math.random() * (to - from));
 }
 
-function play() {
-  const wordIndex = getRandomIndex();
-  const themeIndex = getRandomIndex();
-  const theme = getTheme(themeIndex);
-  const word = getWord(themeIndex, wordIndex);
-  const chances = 5;
-  const wrongGuesses = '';
+function doesUserWantToReplay() {
+  return confirm('Do you want to play again?');
+}
 
-  prompt("Press ENTER to start.");
-  console.clear();
-  console.log('The game has started, start guessing, good luck.');
-  console.log(_play(chances, word, theme, hideWord(word), wrongGuesses));
+function doesUserWantHelp() {
+  return confirm('Do you want to see the rules??');
+}
 
-  if (confirm("Do you want to play again?")) {
+function replay() {
+  if (doesUserWantToReplay()) {
     console.clear();
-    if (confirm('Do you want to see the rules??')) {
+    if (doesUserWantHelp()) {
       console.log(getRules());
     }
 
     play();
   }
+}
 
+function play() {
+  const wordIndex = getRandomNumberInRange(0, 10);
+  const themeIndex = getRandomNumberInRange(0, 10);
+  const theme = getTheme(themeIndex);
+  const word = getWord(themeIndex, wordIndex);
+  const chances = 5;
+  const wrongGuesses = '';
+
+  prompt('Press ENTER to start.');
   console.clear();
-  console.log("Thanks for playing 🤗");
+  console.log(_play(chances, word, theme, hideWord(word), wrongGuesses));
+  replay();
+  console.clear();
+
+  return 'Thanks for playing 🤗';
 }
 
 console.log(getRules());
-play();
+console.log(play());
