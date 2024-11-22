@@ -304,19 +304,21 @@ function _play(chancesLeft, word, theme, hiddenWord, wrongGuesses) {
   return _play(chancesLeft - 1, word, theme, hiddenWord, wrongGuesses + '"' + guess + '" ');
 }
 
-function getRandomIndex() {
-  return Math.floor(Math.random() * 10);
+function getRules() {
+  let rules = '_________RULES_________\n';
+  rules += '👉You have to guess the word character by character in any order, the word length will be given.\n';
+  rules += '👉The word will be given in lowercase only.\n';
+  rules += '👉For every wrong guess, you will lose one chance, that means you\'ll lose one body part.\n';
+  rules += '👉For every right guess, all the positions of the character that you\'ve guessed will be revealed.\n';
+  rules += '👉That means you don\'t have to guess the same character again and you\'ll not lose a chance.\n';
+  rules += '👉You\'ll survive if you guess all the characters(word).\n';
+  rules += '👉You\'ll die if you don\'t guess it within the given chances.\n';
+
+  return rules;
 }
 
-function printRules() {
-  console.log('_________RULES_________');
-  console.log('👉You have to guess the word character by character in any order, the word length will be given.');
-  console.log('👉The word will be given in lowercase only.');
-  console.log('👉For every wrong guess, you will lose one chance, that means you\'ll lose one body part.');
-  console.log('👉For every right guess, all the positions of the character that you\'ve guessed will be revealed.');
-  console.log('👉That means you don\'t have to guess the same character again and you\'ll not lose a chance.');
-  console.log('👉You\'ll survive if you guess all the characters(word).');
-  console.log('👉You\'ll die if you don\'t guess it within the given chances.\n');
+function getRandomIndex() {
+  return Math.floor(Math.random() * 10);
 }
 
 function play() {
@@ -335,7 +337,7 @@ function play() {
   if (confirm("Do you want to play again?")) {
     console.clear();
     if (confirm('Do you want to see the rules??')) {
-      printRules();
+      console.log(getRules());
     }
 
     play();
@@ -345,5 +347,5 @@ function play() {
   console.log("Thanks for playing 🤗");
 }
 
-printRules();
+console.log(getRules());
 play();
