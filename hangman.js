@@ -53,7 +53,7 @@ function getGamesWord(wordIndex) {
     case 5: return 'teammate';
     case 6: return 'board';
     case 7: return 'console';
-    case 8: return 'injury';
+    case 8: return 'competitor';
     case 9: return 'opponent';
   }
 }
@@ -108,7 +108,7 @@ function getSportsWord(wordIndex) {
     case 0: return 'tournament';
     case 1: return 'rival';
     case 2: return 'competition';
-    case 3: return 'competitor';
+    case 3: return 'injury';
     case 4: return 'winner';
     case 5: return 'defense';
     case 6: return 'champion';
@@ -163,7 +163,6 @@ function getSpaceWord(wordIndex) {
   }
 }
 
-
 function getWord(themeIndex, wordIndex) {
   switch (themeIndex) {
     case 0: return getArtWord(wordIndex);
@@ -179,11 +178,6 @@ function getWord(themeIndex, wordIndex) {
   }
 }
 
-const themeIndex = Math.floor(Math.random() * 10);
-const wordIndex = Math.floor(Math.random() * 10);
-const THEME = getTheme(themeIndex);
-const WORD = getWord(themeIndex, wordIndex);
-
 function visualiseHangman(chancesLeft) {
   let diagram = '';
 
@@ -191,6 +185,7 @@ function visualiseHangman(chancesLeft) {
     diagram += '------' + '\n';
     diagram += '     |' + '\n';
     diagram += '\n' + '\n' + '\n' + '\n' + '\n';
+    return diagram;
   }
 
   if (chancesLeft === 5) {
@@ -198,6 +193,7 @@ function visualiseHangman(chancesLeft) {
     diagram += '     |' + '\n';
     diagram += '    ( )' + '\n';
     diagram += '\n' + '\n' + '\n';
+    return diagram;
   }
 
   if (chancesLeft === 4) {
@@ -206,6 +202,7 @@ function visualiseHangman(chancesLeft) {
     diagram += '    ( )' + '\n';
     diagram += '    / \\' + '\n';
     diagram += '\n' + '\n';
+    return diagram;
   }
 
   if (chancesLeft === 3) {
@@ -215,6 +212,7 @@ function visualiseHangman(chancesLeft) {
     diagram += '    /|\\' + '\n';
     diagram += '     |' + '\n';
     diagram += '\n';
+    return diagram;
   }
 
   if (chancesLeft === 2) {
@@ -224,6 +222,7 @@ function visualiseHangman(chancesLeft) {
     diagram += '    /|\\' + '\n';
     diagram += '     |' + '\n';
     diagram += '      \\' + '\n';
+    return diagram;
   }
 
   if (chancesLeft === 1) {
@@ -233,57 +232,24 @@ function visualiseHangman(chancesLeft) {
     diagram += '    /|\\' + '\n';
     diagram += '     |' + '\n';
     diagram += '    / \\' + '\n';
+    return diagram;
   }
 
   return diagram;
 }
 
-function getCharToReplace(string, currentIndex, indexToReplace, char) {
-  return currentIndex === indexToReplace ? char : string[currentIndex];
+function getCharToReplace(index, guess, string, word) {
+  return word[index] === guess ? word[index] : string[index];
 }
 
-function getMatchedIndices(string, char) {
-  let matchedIndices = '';
+function replaceIndices(string, guess, word) {
+  let replacedString = '';
 
   for (let index = 0; index < string.length; index++) {
-    if (string[index] === char) {
-      matchedIndices += index + ',';
-    }
+    replacedString += getCharToReplace(index, guess, string, word);
   }
 
-  return matchedIndices;
-}
-
-function replaceIndex(string, indexToReplace, char) {
-  let replacedStr = '';
-
-  for (let currentIndex = 0; currentIndex < string.length; currentIndex++) {
-    replacedStr += getCharToReplace(string, currentIndex, indexToReplace, char);
-  }
-
-  return replacedStr;
-}
-
-function replaceIndices(string, matchedIndices) {
-  let replacedStr = string;
-  let matchedIndex = '';
-  let index = 0;
-
-  while (index < matchedIndices.length) {
-    if (matchedIndices[index] === ',') {
-      replacedStr = replaceIndex(replacedStr, +matchedIndex, WORD[+matchedIndex]);
-      matchedIndex = '';
-      index++;
-    }
-
-    matchedIndex += matchedIndices[index];
-    index++;
-  }
-  return replacedStr;
-}
-
-function verifyGuess(guess) {
-  return (getMatchedIndices(WORD, guess) !== '');
+  return replacedString;
 }
 
 function hideWord(word) {
@@ -306,37 +272,65 @@ function isExistingChar(guess, hiddenWord) {
   return false;
 }
 
-function _play(chancesLeft, hiddenWord) {
+function _play(chancesLeft, word, theme, hiddenWord) {
+  console.log('It is a ' + word.length + ' letter word and it\'s related to "' + theme + '".');
   console.log(visualiseHangman(chancesLeft + 1));
   console.log(hiddenWord);
 
-  if (hiddenWord === WORD) {
+  if (hiddenWord === word) {
     return 'Congratulations 🎉 You have guessed it right, YOU SURVIVED!!';
   }
 
   if (chancesLeft === 0) {
-    return 'The word was "' + WORD + '" Bad Luck 😞 YOU DIED 💀 Game Ended 🏳️';
+    return 'The word was "' + word + '" Bad Luck 😞 YOU DIED 💀 Game Ended 🏳️';
   }
 
   console.log('You have ' + chancesLeft + ' chances to guess.');
   const guess = prompt('Guess a character:');
+  const newHiddenWord = replaceIndices(hiddenWord, guess, word);
+  const sameGuess = isExistingChar(guess, hiddenWord);
+  const rightGuessMessage = sameGuess ? '\n ‼️ You have already entered that character\n' : '\n ✅ Good job 👍 Keep Going\n';
 
-  if (verifyGuess(guess)) {
-    const rightGuessMessage = isExistingChar(guess, hiddenWord) ? '\n ‼️ You have already entered that character\n' : '\n ✅ Good job 👍 Keep Going\n';
+  if (hiddenWord !== newHiddenWord || sameGuess) {
+    console.clear();
     console.log(rightGuessMessage);
 
-    return _play(chancesLeft, replaceIndices(hiddenWord, getMatchedIndices(WORD, guess)));
+    return _play(chancesLeft, word, theme, newHiddenWord);
   }
 
+  console.clear();
   console.log('\n ❌ Oops!!\n');
 
-  return _play(chancesLeft - 1, hiddenWord);
+  return _play(chancesLeft - 1, word, theme, hiddenWord);
+}
+
+function getRandomIndex() {
+  return Math.floor(Math.random() * 10);
 }
 
 function play() {
+  const wordIndex = getRandomIndex();
+  const themeIndex = getRandomIndex();
+  const theme = getTheme(themeIndex);
+  const word = getWord(themeIndex, wordIndex);
+  const chances = 5;
+
+  prompt("Press ENTER to start.");
+  console.clear();
   console.log('The game has started, start guessing, good luck.');
-  console.log('It is a ' + WORD.length + ' letter word and it\'s related to "' + THEME + '".');
-  return _play(5, hideWord(WORD));
+  console.log(_play(chances, word, theme, hideWord(word)));
+
+  if (confirm("Do you want to play again?")) {
+    console.clear();
+    if (confirm('Do you want to see the rules??')) {
+      printRules();
+    }
+
+    play();
+  }
+
+  console.clear();
+  console.log("Thanks for playing 🤗");
 }
 
 function printRules() {
@@ -351,4 +345,4 @@ function printRules() {
 }
 
 printRules();
-console.log(play());
+play();
