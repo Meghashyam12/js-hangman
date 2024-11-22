@@ -272,10 +272,10 @@ function isExistingChar(guess, hiddenWord) {
   return false;
 }
 
-function _play(chancesLeft, word, theme, hiddenWord) {
-  console.log('It is a ' + word.length + ' letter word and it\'s related to "' + theme + '".');
+function _play(chancesLeft, word, theme, hiddenWord, wrongGuesses) {
+  console.log('It is a "' + word.length + '" letter word and it\'s related to "' + theme + '".');
   console.log(visualiseHangman(chancesLeft + 1));
-  console.log(hiddenWord);
+  console.log(hiddenWord, "       Wrong Guesses:", wrongGuesses);
 
   if (hiddenWord === word) {
     return 'Congratulations 🎉 You have guessed it right, YOU SURVIVED!!';
@@ -295,17 +295,28 @@ function _play(chancesLeft, word, theme, hiddenWord) {
     console.clear();
     console.log(rightGuessMessage);
 
-    return _play(chancesLeft, word, theme, newHiddenWord);
+    return _play(chancesLeft, word, theme, newHiddenWord, wrongGuesses);
   }
 
   console.clear();
   console.log('\n ❌ Oops!!\n');
 
-  return _play(chancesLeft - 1, word, theme, hiddenWord);
+  return _play(chancesLeft - 1, word, theme, hiddenWord, wrongGuesses + '"' + guess + '" ');
 }
 
 function getRandomIndex() {
   return Math.floor(Math.random() * 10);
+}
+
+function printRules() {
+  console.log('_________RULES_________');
+  console.log('👉You have to guess the word character by character in any order, the word length will be given.');
+  console.log('👉The word will be given in lowercase only.');
+  console.log('👉For every wrong guess, you will lose one chance, that means you\'ll lose one body part.');
+  console.log('👉For every right guess, all the positions of the character that you\'ve guessed will be revealed.');
+  console.log('👉That means you don\'t have to guess the same character again and you\'ll not lose a chance.');
+  console.log('👉You\'ll survive if you guess all the characters(word).');
+  console.log('👉You\'ll die if you don\'t guess it within the given chances.\n');
 }
 
 function play() {
@@ -314,11 +325,12 @@ function play() {
   const theme = getTheme(themeIndex);
   const word = getWord(themeIndex, wordIndex);
   const chances = 5;
+  const wrongGuesses = '';
 
   prompt("Press ENTER to start.");
   console.clear();
   console.log('The game has started, start guessing, good luck.');
-  console.log(_play(chances, word, theme, hideWord(word)));
+  console.log(_play(chances, word, theme, hideWord(word), wrongGuesses));
 
   if (confirm("Do you want to play again?")) {
     console.clear();
@@ -331,17 +343,6 @@ function play() {
 
   console.clear();
   console.log("Thanks for playing 🤗");
-}
-
-function printRules() {
-  console.log('_________RULES_________');
-  console.log('👉You have to guess the word character by character in any order, the word length will be given.');
-  console.log('👉The word will be given in lowercase only.');
-  console.log('👉For every wrong guess, you will lose one chance, that means you\'ll lose one body part.');
-  console.log('👉For every right guess, all the positions of the character that you\'ve guessed will be revealed.');
-  console.log('👉That means you don\'t have to guess the same character again and you\'ll not lose a chance.');
-  console.log('👉You\'ll survive if you guess all the characters(word).');
-  console.log('👉You\'ll die if you don\'t guess it within the given chances.\n');
 }
 
 printRules();
